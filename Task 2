@@ -1,0 +1,80 @@
+# Step 1: Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
+
+# Step 2: Load the dataset
+# You can download the dataset from Kaggle and upload it to Google Colab, or use the provided link to load it directly
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+df = pd.read_csv(url)
+
+# Step 3: Handle missing values
+df['Age'].fillna(df['Age'].median(), inplace=True)
+df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
+
+# Step 4: Encode categorical variables
+label_encoder = LabelEncoder()
+df['Sex'] = label_encoder.fit_transform(df['Sex'])
+df['Embarked'] = label_encoder.fit_transform(df['Embarked'])
+
+# Step 5: Feature selection
+X = df[['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare']]
+y = df['Survived']
+
+# Step 6: Feature scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 7: Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Step 8: Initialize models
+logistic_model = LogisticRegression()
+random_forest_model = RandomForestClassifier()
+svm_model = SVC()
+
+# Step 9: Train the models
+logistic_model.fit(X_train, y_train)
+random_forest_model.fit(X_train, y_train)
+svm_model.fit(X_train, y_train)
+
+# Step 10: Make predictions
+y_pred_logistic = logistic_model.predict(X_test)
+y_pred_rf = random_forest_model.predict(X_test)
+y_pred_svm = svm_model.predict(X_test)
+
+# Step 11: Evaluate the models
+# Accuracy
+accuracy_logistic = accuracy_score(y_test, y_pred_logistic)
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+accuracy_svm = accuracy_score(y_test, y_pred_svm)
+
+# Precision
+precision_logistic = precision_score(y_test, y_pred_logistic)
+precision_rf = precision_score(y_test, y_pred_rf)
+precision_svm = precision_score(y_test, y_pred_svm)
+
+# Recall
+recall_logistic = recall_score(y_test, y_pred_logistic)
+recall_rf = recall_score(y_test, y_pred_rf)
+recall_svm = recall_score(y_test, y_pred_svm)
+
+# F1 Score
+f1_logistic = f1_score(y_test, y_pred_logistic)
+f1_rf = f1_score(y_test, y_pred_rf)
+f1_svm = f1_score(y_test, y_pred_svm)
+
+# Confusion Matrix & Classification Report
+print("Logistic Regression:\n", classification_report(y_test, y_pred_logistic))
+print("Random Forest:\n", classification_report(y_test, y_pred_rf))
+print("SVM:\n", classification_report(y_test, y_pred_svm))
+
+# Step 12: Print the evaluation metrics
+print("Accuracy:\n Logistic: {:.4f}, Random Forest: {:.4f}, SVM: {:.4f}".format(accuracy_logistic, accuracy_rf, accuracy_svm))
+print("Precision:\n Logistic: {:.4f}, Random Forest: {:.4f}, SVM: {:.4f}".format(precision_logistic, precision_rf, precision_svm))
+print("Recall:\n Logistic: {:.4f}, Random Forest: {:.4f}, SVM: {:.4f}".format(recall_logistic, recall_rf, recall_svm))
+print("F1 Score:\n Logistic: {:.4f}, Random Forest: {:.4f}, SVM: {:.4f}".format(f1_logistic, f1_rf, f1_svm))
