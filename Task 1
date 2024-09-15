@@ -1,0 +1,47 @@
+# Step 1: Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Step 2: Load the dataset
+# You can download the dataset from Kaggle and upload it to Google Colab, or use the provided link to load it directly
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+df = pd.read_csv(url)
+
+# Display the first few rows of the dataset to understand its structure
+df.head()
+
+# Step 3: Handle missing values
+# For simplicity, we'll fill missing values in the 'Age' column with the median
+df['Age'].fillna(df['Age'].median(), inplace=True)
+
+# The 'Embarked' column has some missing values; we'll fill them with the most common port
+df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
+
+# If there are any other missing values, you can handle them as well
+# Check for missing values after processing
+df.isnull().sum()
+
+# Step 4: Encode categorical variables
+# Encoding 'Sex' and 'Embarked' columns
+label_encoder = LabelEncoder()
+df['Sex'] = label_encoder.fit_transform(df['Sex'])
+df['Embarked'] = label_encoder.fit_transform(df['Embarked'])
+
+# Step 5: Feature selection (select features that might be useful)
+# We'll use 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', and 'Fare' as features
+X = df[['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare']]
+y = df['Survived']
+
+# Step 6: Feature scaling (standardizing the features)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 7: Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Output shapes of the data splits to verify
+print("X_train shape:", X_train.shape)
+print("X_test shape:", X_test.shape)
+print("y_train shape:", y_train.shape)
+print("y_test shape:", y_test.shape)
